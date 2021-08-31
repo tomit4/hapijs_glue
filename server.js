@@ -1,36 +1,11 @@
 'use strict'
 
 const Glue = require('@hapi/glue')
-const Inert = require('@hapi/inert')
-const path = require('path')
+const getRoute = require('./lib/routepaths')
 
 require('dotenv').config()
 
-const manifest = {
-    server: {
-        host: process.env.HOST,
-        port: process.env.PORT,
-
-        routes: {
-            cors: {
-                origin: ['*'],
-                additionalHeaders: ['headers']
-            },
-            files: {
-                relativeTo: path.join(__dirname, "./routes")
-            },
-        }
-    },
-    register: {
-        plugins: [
-            Inert,
-            // {
-            // plugin: 
-            // }
-            ]
-
-    }
-}
+const manifest = require('./manifest')
 
 const startServer = async function () {
     try {
@@ -40,13 +15,7 @@ const startServer = async function () {
         await require('exiting').createManager(server).start()
 
         // Add HapiJS server side rendered routes here
-        server.route({
-            method: 'GET',
-            path: '/',
-            handler: function (req, h) {
-                return h.file("./index.html")
-            }
-        })
+        server.route(getRoute)
 
         server.events.on('stop', () => {
             console.log('Server Stopped.')
