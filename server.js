@@ -2,14 +2,14 @@
 
 const Glue = require('@hapi/glue')
 const getRoute = require('./lib/routepaths')
-
 require('dotenv').config()
 
-const manifest = require('./manifest')
+// Confidence requires this ('/', process.env)
+const Manifest = require('./manifest').get('/', process.env) 
 
 const startServer = async function () {
     try {
-        const server = await Glue.compose(manifest, {
+        const server = await Glue.compose(Manifest, {
             relativeTo: __dirname
         })
         await require('exiting').createManager(server).start()
